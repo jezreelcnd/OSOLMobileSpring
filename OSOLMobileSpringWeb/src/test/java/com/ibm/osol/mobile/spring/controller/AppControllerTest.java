@@ -58,14 +58,14 @@ public class AppControllerTest {
 	@Test
 	public void listEmployees(){
 		when(service.findAllEmployees()).thenReturn(employees);
-		Assert.assertEquals(appController.listEmployees(model), "allemployees");
+		Assert.assertEquals(appController.listEmployees(model), "/employee/allemployees");
 		Assert.assertEquals(model.get("employees"), employees);
 		verify(service, atLeastOnce()).findAllEmployees();
 	}
 	
 	@Test
 	public void newEmployee(){
-		Assert.assertEquals(appController.newEmployee(model), "registration");
+		Assert.assertEquals(appController.newEmployee(model), "/employee/registration");
 		Assert.assertNotNull(model.get("employee"));
 		Assert.assertFalse((Boolean)model.get("edit"));
 		Assert.assertEquals(((Employee)model.get("employee")).getId(), 0);
@@ -76,14 +76,14 @@ public class AppControllerTest {
 	public void saveEmployeeWithValidationError(){
 		when(result.hasErrors()).thenReturn(true);
 		doNothing().when(service).saveEmployee(any(Employee.class));
-		Assert.assertEquals(appController.saveEmployee(employees.get(0), result, model), "registration");
+		Assert.assertEquals(appController.saveEmployee(employees.get(0), result, model), "/employee/registration");
 	}
 
 	@Test
 	public void saveEmployeeWithValidationErrorNonUniqueSSN(){
 		when(result.hasErrors()).thenReturn(false);
 		when(service.isEmployeeSsnUnique(anyInt(), anyString())).thenReturn(false);
-		Assert.assertEquals(appController.saveEmployee(employees.get(0), result, model), "registration");
+		Assert.assertEquals(appController.saveEmployee(employees.get(0), result, model), "/employee/registration");
 	}
 
 	
@@ -92,7 +92,7 @@ public class AppControllerTest {
 		when(result.hasErrors()).thenReturn(false);
 		when(service.isEmployeeSsnUnique(anyInt(), anyString())).thenReturn(true);
 		doNothing().when(service).saveEmployee(any(Employee.class));
-		Assert.assertEquals(appController.saveEmployee(employees.get(0), result, model), "success");
+		Assert.assertEquals(appController.saveEmployee(employees.get(0), result, model), "/employee/success");
 		Assert.assertEquals(model.get("success"), "Employee Axel registered successfully");
 	}
 
@@ -100,7 +100,7 @@ public class AppControllerTest {
 	public void editEmployee(){
 		Employee emp = employees.get(0);
 		when(service.findEmployeeBySsn(anyString())).thenReturn(emp);
-		Assert.assertEquals(appController.editEmployee(anyString(), model), "registration");
+		Assert.assertEquals(appController.editEmployee(anyString(), model), "/employee/registration");
 		Assert.assertNotNull(model.get("employee"));
 		Assert.assertTrue((Boolean)model.get("edit"));
 		Assert.assertEquals(((Employee)model.get("employee")).getId(), 1);
@@ -110,14 +110,14 @@ public class AppControllerTest {
 	public void updateEmployeeWithValidationError(){
 		when(result.hasErrors()).thenReturn(true);
 		doNothing().when(service).updateEmployee(any(Employee.class));
-		Assert.assertEquals(appController.updateEmployee(employees.get(0), result, model,""), "registration");
+		Assert.assertEquals(appController.updateEmployee(employees.get(0), result, model,""), "/employee/registration");
 	}
 
 	@Test
 	public void updateEmployeeWithValidationErrorNonUniqueSSN(){
 		when(result.hasErrors()).thenReturn(false);
 		when(service.isEmployeeSsnUnique(anyInt(), anyString())).thenReturn(false);
-		Assert.assertEquals(appController.updateEmployee(employees.get(0), result, model,""), "registration");
+		Assert.assertEquals(appController.updateEmployee(employees.get(0), result, model,""), "/employee/registration");
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class AppControllerTest {
 		when(result.hasErrors()).thenReturn(false);
 		when(service.isEmployeeSsnUnique(anyInt(), anyString())).thenReturn(true);
 		doNothing().when(service).updateEmployee(any(Employee.class));
-		Assert.assertEquals(appController.updateEmployee(employees.get(0), result, model, ""), "success");
+		Assert.assertEquals(appController.updateEmployee(employees.get(0), result, model, ""), "/employee/success");
 		Assert.assertEquals(model.get("success"), "Employee Axel updated successfully");
 	}
 	
@@ -133,7 +133,7 @@ public class AppControllerTest {
 	@Test
 	public void deleteEmployee(){
 		doNothing().when(service).deleteEmployeeBySsn(anyString());
-		Assert.assertEquals(appController.deleteEmployee("123"), "redirect:/list");
+		Assert.assertEquals(appController.deleteEmployee("123"), "redirect:/employee/list");
 	}
 
 	public List<Employee> getEmployeeList(){
